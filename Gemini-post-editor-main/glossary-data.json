@@ -1,0 +1,184 @@
+{
+  "version": "1.0",
+  "encoding": "UTF-8",
+  "feed": {
+    "xmlns": "http://www.w3.org/2005/Atom",
+    "id": {
+      "$t": "tag:blogger.com,1999:blog-aginghealth.glossary-offline"
+    },
+    "updated": {
+      "$t": "2026-11-13T14:47:00.000-06:00"
+    },
+    "title": {
+      "type": "text",
+      "$t": "Aging Health Medical Glossary (Offline Test Feed)"
+    },
+    "entry": [
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-aginghealth.post-101"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Hypomagnesemia"
+        },
+        "summary": {
+          "type": "text",
+          "$t": "Abnormally low magnesium levels in the blood (typically below 1.7 mg/dL), which can contribute to muscle cramps, fatigue, irregular heart rhythms, and impaired vitamin D activation in older adults."
+        },
+        "content": {
+          "type": "html",
+          "$t": "<p>Abnormally low magnesium levels in the blood (typically below 1.7 mg/dL), which can contribute to muscle cramps, fatigue, irregular heart rhythms, and impaired vitamin D activation in older adults.</p>"
+        },
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "text/html",
+            "href": "https://www.aginghealth.website/p/glossary.html#term-hypomagnesemia",
+            "title": "Hypomagnesemia"
+          }
+        ],
+        "category": [
+          {
+            "term": "Glossary"
+          },
+          {
+            "term": "Minerals & Electrolytes"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-aginghealth.post-102"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Sarcopenia"
+        },
+        "summary": {
+          "type": "text",
+          "$t": "Progressive, age-related loss of skeletal muscle mass, strength, and physical function that increases the risk of falls, frailty, and metabolic decline—especially during rapid weight loss."
+        },
+        "content": {
+          "type": "html",
+          "$t": "<p>Progressive, age-related loss of skeletal muscle mass, strength, and physical function that increases the risk of falls, frailty, and metabolic decline—especially during rapid weight loss.</p>"
+        },
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "text/html",
+            "href": "https://www.aginghealth.website/p/glossary.html#term-sarcopenia",
+            "title": "Sarcopenia"
+          }
+        ],
+        "category": [
+          {
+            "term": "Glossary"
+          },
+          {
+            "term": "Muscle & Mobility"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-aginghealth.post-103"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Bioavailability"
+        },
+        "summary": {
+          "type": "text",
+          "$t": "The proportion of a nutrient, supplement, or medication that is absorbed through the digestive tract and enters systemic circulation in an active form usable by the body."
+        },
+        "content": {
+          "type": "html",
+          "$t": "<p>The proportion of a nutrient, supplement, or medication that is absorbed through the digestive tract and enters systemic circulation in an active form usable by the body.</p>"
+        },
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "text/html",
+            "href": "https://www.aginghealth.website/p/glossary.html#term-bioavailability",
+            "title": "Bioavailability"
+          }
+        ],
+        "category": [
+          {
+            "term": "Glossary"
+          },
+          {
+            "term": "Pharmacology & Absorption"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-aginghealth.post-104"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Ubiquinol"
+        },
+        "summary": {
+          "type": "text",
+          "$t": "The reduced, electron-rich active antioxidant form of Coenzyme Q10 (CoQ10) that supports mitochondrial ATP energy production and becomes harder for the body to convert from ubiquinone after age 50."
+        },
+        "content": {
+          "type": "html",
+          "$t": "<p>The reduced, electron-rich active antioxidant form of Coenzyme Q10 (CoQ10) that supports mitochondrial ATP energy production and becomes harder for the body to convert from ubiquinone after age 50.</p>"
+        },
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "text/html",
+            "href": "https://www.aginghealth.website/p/glossary.html#term-ubiquinol",
+            "title": "Ubiquinol"
+          }
+        ],
+        "category": [
+          {
+            "term": "Glossary"
+          },
+          {
+            "term": "Cellular Energy"
+          }
+        ]
+      },
+      {
+        "id": {
+          "$t": "tag:blogger.com,1999:blog-aginghealth.post-105"
+        },
+        "title": {
+          "type": "text",
+          "$t": "Chronic Latent Magnesium Deficiency"
+        },
+        "summary": {
+          "type": "text",
+          "$t": "A subclinical state in which intracellular and bone magnesium stores are depleted even though standard serum magnesium blood tests still read inside the normal reference range."
+        },
+        "content": {
+          "type": "html",
+          "$t": "<p>A subclinical state in which intracellular and bone magnesium stores are depleted even though standard serum magnesium blood tests still read inside the normal reference range.</p>"
+        },
+        "link": [
+          {
+            "rel": "alternate",
+            "type": "text/html",
+            "href": "https://www.aginghealth.website/p/glossary.html#term-chronic-latent-magnesium-deficiency",
+            "title": "Chronic Latent Magnesium Deficiency"
+          }
+        ],
+        "category": [
+          {
+            "term": "Glossary"
+          },
+          {
+            "term": "Minerals & Electrolytes"
+          }
+        ]
+      }
+    ]
+  }
+}
