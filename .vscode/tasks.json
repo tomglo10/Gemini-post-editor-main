@@ -1,0 +1,106 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Aging Health: Create New Post Draft",
+			"type": "process",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/new-post.ps1",
+				"-PostSlug",
+				"${input:newPostSlug}",
+				"-PostTitle",
+				"${input:newPostTitle}"
+			],
+			"presentation": {
+				"reveal": "silent",
+				"panel": "dedicated",
+				"clear": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Aging Health: Build & Audit Blogger Post",
+			"type": "process",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/build-blogger-post.ps1",
+				"-HtmlFilePath",
+				"${file}",
+				"-PostSlug",
+				"${input:postSlug}",
+				"-TopicName",
+				"${input:topicName}"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated",
+				"clear": true,
+				"showReuseMessage": false
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Aging Health: Batch Audit All Posts (JSON-LD & Schema)",
+			"type": "process",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/validate-jsonld.ps1",
+				"-Path",
+				"${workspaceFolder}/posts"
+			],
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated",
+				"clear": true,
+				"showReuseMessage": false
+			},
+			"problemMatcher": []
+		}
+	],
+	"inputs": [
+		{
+			"id": "newPostSlug",
+			"type": "promptString",
+			"description": "New Blogger Post Slug (e.g., leg-pain-walking):"
+		},
+		{
+			"id": "newPostTitle",
+			"type": "promptString",
+			"description": "Article Headline (optional — press Enter to auto-generate from slug):",
+			"default": ""
+		},
+		{
+			"id": "postSlug",
+			"type": "promptString",
+			"description": "Blogger Post Slug (press Enter to use current filename):",
+			"default": "${fileBasenameNoExtension}"
+		},
+		{
+			"id": "topicName",
+			"type": "promptString",
+			"description": "Topic Name for DefinedTermSet schema (optional — press Enter to auto-generate from slug):",
+			"default": ""
+		}
+	]
+}
