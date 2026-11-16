@@ -1,0 +1,16 @@
+## Aging Health Local Authoring, Audit & Blogger Publishing Workflow
+
+This repository manages the custom **TDMag Blogger XML theme**, local HTML post drafts, VS Code snippets, and PowerShell build/validation tools for **[Aging Health](https://www.aginghealth.website/)** (authored by Tommy T. Douglas).
+
+### Repository Structure
+
+```text
+├── .vscode/
+│   └── tasks.json                 # VS Code build (Ctrl+Shift+B) & batch test tasks
+├── posts/
+│   └── <post-slug>.html           # Local HTML article drafts
+├── post-preview-template.html     # Live Server wrapper with mock theme schema & inspector
+├── build-blogger-post.ps1         # Single-post SEO/schema auditor, compiler & clipboard exporter
+├── validate-jsonld.ps1            # Batch JSON-LD, citation & HTML section validator
+└── theme/
+    └── tdmag-aging-health.xml     # Custom Blogger Layout v3 XML template backup
