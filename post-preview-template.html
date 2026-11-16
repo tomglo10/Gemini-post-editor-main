@@ -1,17 +1,12 @@
 <!DOCTYPE html>
 <html lang="en-US" dir="ltr">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#014a69" />
-    <title>Post Title Preview - Aging Health</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#014a69" />
+  <title>Post Title Preview - Aging Health</title>
 
-    <!-- =====================================================================
-       MOCK BLOGGER THEME SCHEMA (<head> + Blog1 Article @id Anchors)
-       Update "post-slug" below when testing a specific post locally
-       ===================================================================== -->
-    <script type="application/ld+json">
+  <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@graph": [
@@ -34,434 +29,155 @@
         "name": "Post Title Preview - Aging Health",
         "description": "Plain-language senior health and wellness guide from Aging Health.",
         "inLanguage": "en-US",
-        "author": {
-          "@id": "https://www.aginghealth.website/#author"
-        },
-        "publisher": {
-          "@id": "https://www.aginghealth.website/#organization"
-        }
+        "author": { "@id": "https://www.aginghealth.website/#author" },
+        "publisher": { "@id": "https://www.aginghealth.website/#organization" }
       },
       {
         "@type": "Article",
         "@id": "https://www.aginghealth.website/post-slug.html#article",
-        "mainEntityOfPage": {
-          "@id": "https://www.aginghealth.website/post-slug.html"
-        },
+        "mainEntityOfPage": { "@id": "https://www.aginghealth.website/post-slug.html" },
         "headline": "Post Title Preview",
         "datePublished": "2026-11-16T08:00:00-06:00",
         "dateModified": "2026-11-16T08:00:00-06:00",
-        "image": {
-          "@type": "ImageObject",
-          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgvY8Imc66FDeadyDRadkjNm2XtbAQt-SoAN1e0QxhHGoxrOamPe4HxpT_iosFoYdtiWjcgFcvVT2F7Og5pD2zVw_7sr1FmOOiJ1bmCvS2p2srqCaWKu6hlpTqcWJMZuOZI-k0dF2FmClZxaEbk4WmoLj0Zpu6T2eHxK6WWoXtTayMo5ioPmlxFT-vhTV7Y/s1600/og-featured.jpg"
-        },
-        "author": {
-          "@id": "https://www.aginghealth.website/#author"
-        },
-        "publisher": {
-          "@id": "https://www.aginghealth.website/#organization"
-        }
+        "author": { "@id": "https://www.aginghealth.website/#author" },
+        "publisher": { "@id": "https://www.aginghealth.website/#organization" }
       }
     ]
   }
   </script>
 
-    <!-- =====================================================================
-       BLOGGER THEME HELPER: Dynamic ScholarlyArticle Schema Injector
-       ===================================================================== -->
-    <script type="text/javascript">
-        function createScholarlyArticleSchema(input) {
-            const entries = Array.isArray(input) ? input : [input];
-            const scriptId = 'ah-scholarly-citations';
-            let scriptEl = document.getElementById(scriptId);
-            let graphData = {
-                "@context": "https://schema.org",
-                "@graph": []
-            };
+  <script type="text/javascript">
+  function createScholarlyArticleSchema(input) {
+    const entries = Array.isArray(input) ? input : [input];
+    const scriptId = 'ah-scholarly-citations';
+    let scriptEl = document.getElementById(scriptId);
+    let graphData = { "@context": "https://schema.org", "@graph": [] };
+    if (scriptEl && scriptEl.textContent) {
+      try {
+        const parsed = JSON.parse(scriptEl.textContent);
+        if (Array.isArray(parsed["@graph"])) graphData = parsed;
+      } catch (e) {}
+    } else {
+      scriptEl = document.createElement('script');
+      scriptEl.type = 'application/ld+json';
+      scriptEl.id = scriptId;
+      document.head.appendChild(scriptEl);
+    }
+    const createdSchemas = entries.map(({ title, authors = [], year, journal, pmid, pmcid, doi }) => {
+      const formattedPmcid = pmcid ? (String(pmcid).toUpperCase().startsWith('PMC') ? String(pmcid).toUpperCase() : `PMC${pmcid}`) : null;
+      const cleanPmid = pmid ? String(pmid).replace(/\D/g, '') : null;
+      const cleanDoi = doi ? String(doi).replace(/^https?:\/\/(dx\.)?doi\.org\//i, '').trim() : null;
+      const sameAsUrls = [];
+      if (formattedPmcid) sameAsUrls.push(`https://www.ncbi.nlm.nih.gov/pmc/articles/${formattedPmcid}/`);
+      if (cleanPmid) sameAsUrls.push(`https://pubmed.ncbi.nlm.nih.gov/${cleanPmid}/`);
+      if (cleanDoi) sameAsUrls.push(`https://doi.org/${cleanDoi}`);
+      const schema = { "@type": "ScholarlyArticle", "name": title };
+      if (sameAsUrls.length > 0) { schema.url = sameAsUrls[0]; schema.sameAs = sameAsUrls; }
+      if (authors.length > 0) schema.author = authors.map(name => ({ "@type": "Person", "name": name }));
+      if (year) schema.datePublished = String(year);
+      if (journal) schema.isPartOf = { "@type": "PublicationIssue", "isPartOf": { "@type": "Periodical", "name": journal } };
+      if (!graphData["@graph"].some(item => item.name === schema.name || (schema.url && item.url === schema.url))) {
+        graphData["@graph"].push(schema);
+      }
+      return { "@context": "https://schema.org", ...schema };
+    });
+    scriptEl.textContent = JSON.stringify(graphData);
+    return Array.isArray(input) ? createdSchemas : createdSchemas[0];
+  }
+  </script>
 
-            if (scriptEl && scriptEl.textContent) {
-                try {
-                    const parsed = JSON.parse(scriptEl.textContent);
-                    if (Array.isArray(parsed["@graph"])) {
-                        graphData = parsed;
-                    }
-                } catch (e) { }
-            } else {
-                scriptEl = document.createElement('script');
-                scriptEl.type = 'application/ld+json';
-                scriptEl.id = scriptId;
-                document.head.appendChild(scriptEl);
-            }
-
-            const createdSchemas = entries.map(({ title, authors = [], year, journal, pmid, pmcid, doi }) => {
-                const formattedPmcid = pmcid
-                    ? (String(pmcid).toUpperCase().startsWith('PMC') ? String(pmcid).toUpperCase() : `PMC${pmcid}`)
-                    : null;
-                const cleanPmid = pmid ? String(pmid).replace(/\D/g, '') : null;
-                const cleanDoi = doi ? String(doi).replace(/^https?:\/\/(dx\.)?doi\.org\//i, '').trim() : null;
-
-                const sameAsUrls = [];
-                if (formattedPmcid) sameAsUrls.push(`https://www.ncbi.nlm.nih.gov/pmc/articles/${formattedPmcid}/`);
-                if (cleanPmid) sameAsUrls.push(`https://pubmed.ncbi.nlm.nih.gov/${cleanPmid}/`);
-                if (cleanDoi) sameAsUrls.push(`https://doi.org/${cleanDoi}`);
-
-                const schema = {
-                    "@type": "ScholarlyArticle",
-                    "name": title
-                };
-
-                if (sameAsUrls.length > 0) {
-                    schema.url = sameAsUrls[0];
-                    schema.sameAs = sameAsUrls;
-                }
-                if (authors.length > 0) {
-                    schema.author = authors.map(name => ({ "@type": "Person", "name": name }));
-                }
-                if (year) {
-                    schema.datePublished = String(year);
-                }
-                if (journal) {
-                    schema.isPartOf = {
-                        "@type": "PublicationIssue",
-                        "isPartOf": {
-                            "@type": "Periodical",
-                            "name": journal
-                        }
-                    };
-                }
-
-                const alreadyAdded = graphData["@graph"].some(
-                    item => item.name === schema.name || (schema.url && item.url === schema.url)
-                );
-                if (!alreadyAdded) {
-                    graphData["@graph"].push(schema);
-                }
-
-                return { "@context": "https://schema.org", ...schema };
-            });
-
-            scriptEl.textContent = JSON.stringify(graphData);
-            return Array.isArray(input) ? createdSchemas : createdSchemas[0];
-        }
-    </script>
-
-    <!-- =====================================================================
-       LOCAL PREVIEW STYLES (Excluded automatically by build-blogger-post.ps1)
-       ===================================================================== -->
-    <style>
-        :root {
-            --ah-primary: #014a69;
-            --ah-primary-light: #e8f3f8;
-            --ah-text: #1e293b;
-            --ah-muted: #475569;
-            --ah-border: #cbd5e1;
-            --ah-bg: #ffffff;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            font-size: 18px;
-            line-height: 1.7;
-            color: var(--ah-text);
-            background: var(--ah-bg);
-            max-width: 780px;
-            margin: 0 auto;
-            padding: 0 20px 64px;
-        }
-
-        h2 {
-            color: var(--ah-primary);
-            font-size: 1.55rem;
-            margin-top: 2rem;
-            border-bottom: 2px solid var(--ah-primary-light);
-            padding-bottom: 0.35rem;
-        }
-
-        h3 {
-            color: #0f172a;
-            font-size: 1.25rem;
-            margin-top: 1.5rem;
-        }
-
-        a {
-            color: var(--ah-primary);
-            text-decoration-thickness: 1.5px;
-        }
-
-        img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1.5rem 0;
-        }
-
-        th,
-        td {
-            border: 1px solid var(--ah-border);
-            padding: 10px 12px;
-            text-align: left;
-        }
-
-        th {
-            background: var(--ah-primary-light);
-            color: var(--ah-primary);
-        }
-
-        /* FAQ & Glossary Styling */
-        .ah-faq-section details,
-        .ah-article-glossary details {
-            border: 1px solid var(--ah-border);
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin-bottom: 12px;
-            background: #f8fafc;
-        }
-
-        .ah-faq-section summary,
-        .ah-article-glossary summary {
-            font-weight: 600;
-            cursor: pointer;
-            color: var(--ah-primary);
-        }
-
-        .ah-article-glossary dt {
-            font-weight: 700;
-            color: var(--ah-primary);
-            margin-top: 10px;
-        }
-
-        .ah-article-glossary dd {
-            margin: 4px 0 12px 0;
-        }
-
-        /* Local Preview Toolbar & Schema Inspector */
-        #ah-preview-bar {
-            position: sticky;
-            top: 0;
-            z-index: 999;
-            background: #0f172a;
-            color: #f8fafc;
-            padding: 10px 14px;
-            margin: 0 -20px 24px;
-            border-bottom: 3px solid var(--ah-primary);
-            font-size: 14px;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        #ah-preview-bar button {
-            background: var(--ah-primary);
-            color: #fff;
-            border: 1px solid #38bdf8;
-            border-radius: 5px;
-            padding: 6px 12px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        #ah-preview-bar button:hover {
-            background: #02638c;
-        }
-
-        #ah-schema-drawer {
-            display: none;
-            background: #0f172a;
-            color: #e2e8f0;
-            padding: 16px;
-            margin: -16px -20px 24px;
-            border-radius: 0 0 8px 8px;
-            font-size: 13px;
-        }
-
-        #ah-schema-drawer pre {
-            background: #1e293b;
-            padding: 12px;
-            border-radius: 6px;
-            overflow-x: auto;
-            max-height: 420px;
-            line-height: 1.45;
-        }
-
-        .ah-preview-title-block {
-            border-bottom: 1px solid var(--ah-border);
-            margin-bottom: 24px;
-            padding-bottom: 12px;
-        }
-
-        .ah-preview-title-block h1 {
-            font-size: 2rem;
-            line-height: 1.25;
-            color: #0f172a;
-            margin: 0 0 8px;
-        }
-
-        .ah-preview-byline {
-            font-size: 15px;
-            color: var(--ah-muted);
-        }
-    </style>
+  <style>
+    :root { --ah-primary: #014a69; --ah-primary-light: #e8f3f8; --ah-text: #1e293b; --ah-muted: #475569; --ah-border: #cbd5e1; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 18px; line-height: 1.7; color: var(--ah-text); max-width: 780px; margin: 0 auto; padding: 0 20px 64px; }
+    h2 { color: var(--ah-primary); font-size: 1.55rem; margin-top: 2rem; border-bottom: 2px solid var(--ah-primary-light); padding-bottom: 0.35rem; }
+    h3 { color: #0f172a; font-size: 1.25rem; margin-top: 1.5rem; }
+    a { color: var(--ah-primary); }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    th, td { border: 1px solid var(--ah-border); padding: 10px 12px; text-align: left; }
+    th { background: var(--ah-primary-light); color: var(--ah-primary); }
+    .ah-faq-section details, .ah-article-glossary details { border: 1px solid var(--ah-border); border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; background: #f8fafc; }
+    .ah-faq-section summary, .ah-article-glossary summary { font-weight: 600; cursor: pointer; color: var(--ah-primary); }
+    .ah-article-glossary dt { font-weight: 700; color: var(--ah-primary); margin-top: 10px; }
+    .ah-article-glossary dd { margin: 4px 0 12px 0; }
+    #ah-preview-bar { position: sticky; top: 0; z-index: 999; background: #0f172a; color: #f8fafc; padding: 10px 14px; margin: 0 -20px 24px; border-bottom: 3px solid var(--ah-primary); font-size: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+    #ah-preview-bar button { background: var(--ah-primary); color: #fff; border: 1px solid #38bdf8; border-radius: 5px; padding: 6px 12px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    #ah-schema-drawer { display: none; background: #0f172a; color: #e2e8f0; padding: 16px; margin: -16px -20px 24px; border-radius: 0 0 8px 8px; font-size: 13px; }
+    #ah-schema-drawer pre { background: #1e293b; padding: 12px; border-radius: 6px; overflow-x: auto; max-height: 420px; }
+    .ah-preview-title-block { border-bottom: 1px solid var(--ah-border); margin-bottom: 24px; padding-bottom: 12px; }
+    .ah-preview-title-block h1 { font-size: 2rem; line-height: 1.25; color: #0f172a; margin: 0 0 8px; }
+    .ah-preview-byline { font-size: 15px; color: var(--ah-muted); }
+  </style>
 </head>
-
 <body>
 
-    <!-- PREVIEW-UI-START -->
-    <div id="ah-preview-bar">
-        <div>
-            <strong>Aging Health Local Preview</strong> &bull;
-            <span id="ah-schema-badge">Scanning JSON-LD...</span>
-        </div>
-        <div>
-            <button type="button" id="ah-toggle-schema">Inspect JSON-LD Graph</button>
-            <button type="button" id="ah-copy-schema">Copy All JSON-LD</button>
-        </div>
-    </div>
+<!-- PREVIEW-UI-START -->
+<div id="ah-preview-bar">
+  <div><strong>Aging Health Local Preview</strong> &bull; <span id="ah-schema-badge">Scanning JSON-LD...</span></div>
+  <div>
+    <button type="button" id="ah-toggle-schema">Inspect JSON-LD Graph</button>
+    <button type="button" id="ah-copy-schema">Copy All JSON-LD</button>
+  </div>
+</div>
+<div id="ah-schema-drawer">
+  <div id="ah-graph-audit" style="margin-bottom: 10px; font-weight: 600;"></div>
+  <pre id="ah-schema-output"></pre>
+</div>
+<header class="ah-preview-title-block">
+  <h1>Simulated Blogger Post Title (H1 Rendered by Theme)</h1>
+  <div class="ah-preview-byline">By <strong>Tommy T. Douglas</strong> &bull; Aging Health</div>
+</header>
+<!-- PREVIEW-UI-END -->
 
-    <div id="ah-schema-drawer">
-        <div id="ah-graph-audit" style="margin-bottom: 10px; font-weight: 600;"></div>
-        <pre id="ah-schema-output"></pre>
-    </div>
+<h2>Introduction</h2>
+<p>Write your plain-language article content here using ah-faq-html, ah-glossary-html, and ah-cite snippets.</p>
 
-    <header class="ah-preview-title-block">
-        <h1>Simulated Blogger Post Title (H1 Rendered by Theme)</h1>
-        <div class="ah-preview-byline">By <strong>Tommy T. Douglas</strong> &bull; Aging Health</div>
-    </header>
-    <!-- PREVIEW-UI-END -->
-
-    <!-- =======================================================================
-     POST BODY CONTENT START (Everything below is compiled for Blogger)
-     ======================================================================= -->
-
-    <p>Write your plain-language introduction here (Grade 7–9 reading level).</p>
-
-    <h2>First Major Section Heading</h2>
-    <p>Body content, tables, and links to <a href="https://www.aginghealth.website/p/glossary.html">Aging Health
-            Glossary</a> or local <a href="#term-example">glossary terms</a>.</p>
-
-    <section class="ah-faq-section">
-        <h2>Frequently Asked Questions</h2>
-        <details>
-            <summary>Sample question for older adults and caregivers?</summary>
-            <p>Clear, evidence-based answer that Step 3 of build-blogger-post.ps1 will compile into FAQPage JSON-LD.</p>
-        </details>
-    </section>
-
-    <section class="ah-article-glossary">
-        <h2>Medical Terms Used in This Guide</h2>
-        <dl>
-            <div id="term-example">
-                <dt>Example Medical Term</dt>
-                <dd>Plain-language definition compiled into DefinedTermSet JSON-LD by build-blogger-post.ps1.</dd>
-            </div>
-        </dl>
-    </section>
-
-    <!-- Use VS Code snippet `ah-cite` below to add ScholarlyArticle citations -->
-
-    <!-- =======================================================================
-     POST BODY CONTENT END
-     ======================================================================= -->
-
-    <!-- PREVIEW-UI-START -->
-    <script>
-        (function () {
-            function refreshSchemaInspector() {
-                const scripts = Array.from(document.querySelectorAll('script[type="application/ld+json"]'));
-                const badge = document.getElementById('ah-schema-badge');
-                const auditEl = document.getElementById('ah-graph-audit');
-                const outputEl = document.getElementById('ah-schema-output');
-
-                const parsedBlocks = [];
-                const definedIds = new Set();
-                const referencedIds = new Set();
-                const typesFound = [];
-                let parseErrors = 0;
-
-                function walkNode(node, isRef) {
-                    if (!node || typeof node !== 'object') return;
-                    if (Array.isArray(node)) {
-                        node.forEach(item => walkNode(item, isRef));
-                        return;
-                    }
-                    const keys = Object.keys(node);
-                    if (node['@type']) {
-                        typesFound.push(Array.isArray(node['@type']) ? node['@type'].join('+') : node['@type']);
-                    }
-                    if (node['@id']) {
-                        if (keys.length === 1) {
-                            referencedIds.add(node['@id']);
-                        } else {
-                            definedIds.add(node['@id']);
-                        }
-                    }
-                    keys.forEach(k => {
-                        if (k !== '@id' && typeof node[k] === 'object') {
-                            walkNode(node[k], true);
-                        }
-                    });
-                }
-
-                scripts.forEach((s, idx) => {
-                    try {
-                        const obj = JSON.parse(s.textContent);
-                        parsedBlocks.push(obj);
-                        walkNode(obj, false);
-                    } catch (err) {
-                        parseErrors++;
-                        parsedBlocks.push({ _error: `Block #${idx + 1} invalid JSON: ${err.message}` });
-                    }
-                });
-
-                const unresolved = Array.from(referencedIds).filter(id => !definedIds.has(id));
-                badge.textContent = `${scripts.length} JSON-LD block(s) | Types: ${typesFound.join(', ') || 'None'}`;
-
-                if (parseErrors > 0) {
-                    auditEl.style.color = '#f87171';
-                    auditEl.textContent = `JSON Syntax Errors: ${parseErrors}`;
-                } else if (unresolved.length > 0) {
-                    auditEl.style.color = '#fbbf24';
-                    auditEl.textContent = `Unresolved @id references (check slug match): ${unresolved.join(', ')}`;
-                } else {
-                    auditEl.style.color = '#4ade80';
-                    auditEl.textContent = `All ${referencedIds.size} @id graph link(s) resolved cleanly.`;
-                }
-
-                outputEl.textContent = JSON.stringify(parsedBlocks, null, 2);
-            }
-
-            window.addEventListener('DOMContentLoaded', () => {
-                refreshSchemaInspector();
-
-                const drawer = document.getElementById('ah-schema-drawer');
-                document.getElementById('ah-toggle-schema').addEventListener('click', () => {
-                    refreshSchemaInspector();
-                    drawer.style.display = drawer.style.display === 'block' ? 'none' : 'block';
-                });
-
-                document.getElementById('ah-copy-schema').addEventListener('click', async (e) => {
-                    refreshSchemaInspector();
-                    const text = document.getElementById('ah-schema-output').textContent;
-                    await navigator.clipboard.writeText(text);
-                    const btn = e.target;
-                    btn.textContent = 'Copied!';
-                    setTimeout(() => { btn.textContent = 'Copy All JSON-LD'; }, 1500);
-                });
-            });
-        })();
-    </script>
-    <!-- PREVIEW-UI-END -->
+<!-- PREVIEW-UI-START -->
+<script>
+(function () {
+  function refreshSchemaInspector() {
+    const scripts = Array.from(document.querySelectorAll('script[type="application/ld+json"]'));
+    const badge = document.getElementById('ah-schema-badge');
+    const auditEl = document.getElementById('ah-graph-audit');
+    const outputEl = document.getElementById('ah-schema-output');
+    const parsedBlocks = [], definedIds = new Set(), referencedIds = new Set(), typesFound = [];
+    let parseErrors = 0;
+    function walkNode(node) {
+      if (!node || typeof node !== 'object') return;
+      if (Array.isArray(node)) { node.forEach(walkNode); return; }
+      const keys = Object.keys(node);
+      if (node['@type']) typesFound.push(Array.isArray(node['@type']) ? node['@type'].join('+') : node['@type']);
+      if (node['@id']) { if (keys.length === 1) referencedIds.add(node['@id']); else definedIds.add(node['@id']); }
+      keys.forEach(k => { if (k !== '@id' && typeof node[k] === 'object') walkNode(node[k]); });
+    }
+    scripts.forEach((s, idx) => {
+      try { const obj = JSON.parse(s.textContent); parsedBlocks.push(obj); walkNode(obj); }
+      catch (err) { parseErrors++; parsedBlocks.push({ _error: `Block #${idx + 1} invalid JSON: ${err.message}` }); }
+    });
+    const unresolved = Array.from(referencedIds).filter(id => !definedIds.has(id));
+    badge.textContent = `${scripts.length} JSON-LD block(s) | Types: ${typesFound.join(', ') || 'None'}`;
+    if (parseErrors > 0) { auditEl.style.color = '#f87171'; auditEl.textContent = `JSON Syntax Errors: ${parseErrors}`; }
+    else if (unresolved.length > 0) { auditEl.style.color = '#fbbf24'; auditEl.textContent = `Unresolved @id references: ${unresolved.join(', ')}`; }
+    else { auditEl.style.color = '#4ade80'; auditEl.textContent = `All ${referencedIds.size} @id graph link(s) resolved cleanly.`; }
+    outputEl.textContent = JSON.stringify(parsedBlocks, null, 2);
+  }
+  window.addEventListener('DOMContentLoaded', () => {
+    refreshSchemaInspector();
+    const drawer = document.getElementById('ah-schema-drawer');
+    document.getElementById('ah-toggle-schema').addEventListener('click', () => {
+      refreshSchemaInspector();
+      drawer.style.display = drawer.style.display === 'block' ? 'none' : 'block';
+    });
+    document.getElementById('ah-copy-schema').addEventListener('click', async (e) => {
+      refreshSchemaInspector();
+      await navigator.clipboard.writeText(document.getElementById('ah-schema-output').textContent);
+      e.target.textContent = 'Copied!';
+      setTimeout(() => { e.target.textContent = 'Copy All JSON-LD'; }, 1500);
+    });
+  });
+})();
+</script>
+<!-- PREVIEW-UI-END -->
 
 </body>
-
 </html>
