@@ -647,3 +647,21 @@ $finalBloggerHtml | Set-Clipboard
 Write-Host ("-" * 65) -ForegroundColor DarkGray
 Write-Host "READY FOR BLOGGER ($auditWarnings warning(s)): Post HTML + minified JSON-LD copied to clipboard!" -ForegroundColor Green
 Write-Host "Open Blogger -> Post -> HTML View -> Select All (Ctrl+A) -> Paste (Ctrl+V)." -ForegroundColor Cyan
+# --- Guard: Only compile valid post .html files ---
+if ([string]::IsNullOrWhiteSpace($HtmlFilePath) -or -not (Test-Path -LiteralPath $HtmlFilePath)) {
+    Write-Host "Skipped: No valid file path was passed to build-blogger-post.ps1." -ForegroundColor Yellow
+    exit 0
+}
+
+$fileExt = [System.IO.Path]::GetExtension($HtmlFilePath).ToLowerInvariant()
+$fileName = [System.IO.Path]::GetFileName($HtmlFilePath).ToLowerInvariant()
+
+if ($fileExt -ne ".html") {
+    Write-Host "Skipped: '$fileName' is not an .html post file. Switch to a post .html tab before pressing Ctrl+Shift+B." -ForegroundColor Yellow
+    exit 0
+}
+
+if ($fileName -like "*ah-preview*" -or $fileName -like "*-blogger-ready.html") {
+    Write-Host "Skipped: '$fileName' is a generated preview or output file, not a source draft." -ForegroundColor Yellow
+    exit 0
+}
