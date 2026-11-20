@@ -51,6 +51,29 @@
       "problemMatcher": []
     },
     {
+      "label": "Validate Blogger XML Theme",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/scripts/validate-blogger-xml.ps1",
+        "-XmlFilePath",
+        "${input:xmlPicker}"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Audit & Sync Sitemap",
       "type": "shell",
       "command": "powershell",
@@ -111,6 +134,26 @@
         {
           "label": "wisdom-aging-brain-cognitive-shifts.html",
           "value": "posts/wisdom-aging-brain-cognitive-shifts.html"
+        }
+      ],
+      "default": ""
+    },
+    {
+      "id": "xmlPicker",
+      "type": "pickString",
+      "description": "Choose which Blogger XML theme file to validate",
+      "options": [
+        {
+          "label": "Newest Theme XML File (Auto-Detect)",
+          "value": ""
+        },
+        {
+          "label": "Browse All XML Files (Live Window)",
+          "value": "__PICK__"
+        },
+        {
+          "label": "TD Mag Pro VS.xml",
+          "value": "TD Mag Pro VS.xml"
         }
       ],
       "default": ""
