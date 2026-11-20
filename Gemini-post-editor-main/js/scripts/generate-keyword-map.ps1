@@ -60,7 +60,6 @@ $mappedPosts = foreach ($entry in $allEntries) {
         $slug = $Matches[1]
     }
 
-    # Build clean keyword phrases from title, slug, and Blogger labels
     $keywordCandidates = New-Object System.Collections.Generic.List[string]
 
     if (-not [string]::IsNullOrWhiteSpace($title)) {
