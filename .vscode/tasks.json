@@ -36,9 +36,7 @@
         "-ExecutionPolicy",
         "Bypass",
         "-File",
-        "${workspaceFolder}/scripts/suggest-internal-links.ps1",
-        "-DraftPath",
-        "${file}"
+        "${workspaceFolder}/scripts/suggest-internal-links.ps1"
       ],
       "presentation": {
         "echo": true,
