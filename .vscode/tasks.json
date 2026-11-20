@@ -36,7 +36,9 @@
         "-ExecutionPolicy",
         "Bypass",
         "-File",
-        "${workspaceFolder}/scripts/suggest-internal-links.ps1"
+        "${workspaceFolder}/scripts/suggest-internal-links.ps1",
+        "-DraftPath",
+        "${input:draftPicker}"
       ],
       "presentation": {
         "echo": true,
@@ -90,6 +92,28 @@
         "clear": true
       },
       "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "draftPicker",
+      "type": "pickString",
+      "description": "Choose which HTML draft in posts/ to scan for internal links",
+      "options": [
+        {
+          "label": "Newest Draft in posts/ (Auto-Detect)",
+          "value": ""
+        },
+        {
+          "label": "Browse All HTML Files in posts/ (Live Window)",
+          "value": "__PICK__"
+        },
+        {
+          "label": "wisdom-aging-brain-cognitive-shifts.html",
+          "value": "posts/wisdom-aging-brain-cognitive-shifts.html"
+        }
+      ],
+      "default": ""
     }
   ]
 }
