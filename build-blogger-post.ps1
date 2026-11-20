@@ -8,32 +8,100 @@
 #>
 
 param (
-    [Parameter(Mandatory = $true, Position = 0)]
-    [string]$HtmlFilePath,
+    [Parameter(Mandatory = $false, Position = 0)]
+    [AllowEmptyString()]
+    [string]$HtmlFilePath = "",
 
-    [Parameter(Mandatory = $true, Position = 1)]
-    [string]$PostSlug,
+    [Parameter(Mandatory = $false, Position = 1)]
+    [AllowEmptyString()]
+    [string]$PostSlug = "",
 
     [Parameter(Mandatory = $false, Position = 2)]
-    [string]$TopicName
+    [string]$TopicName = ""
 )
 
 $ErrorActionPreference = "Stop"
 
 # ==============================================================================
-# PRE-FLIGHT FILE & EXTENSION GUARDS
+# STEP 0: RESOLVE draftPicker MENU SELECTIONS ("", "__PICK__", OR FILE PATH)
 # ==============================================================================
-if (-not (Test-Path -LiteralPath $HtmlFilePath -PathType Leaf)) {
+if ($HtmlFilePath -eq "__PICK__") {
+    $postsDir = Join-Path $PSScriptRoot "posts"
+    $searchRoot = if (Test-Path -LiteralPath $postsDir) { $postsDir } else { $PSScriptRoot }
+
+    $candidates = @(
+        Get-ChildItem -Path $searchRoot -Recurse -Filter "*.html" -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -notmatch 'preview|template|index|glossary-data|-compiled|-blogger' } |
+        Sort-Object LastWriteTime -Descending
+    )
+
+    if ($candidates.Count -eq 0) {
+        Write-Host "`nERROR: No .html draft files found in $searchRoot`n" -ForegroundColor Red
+        exit 1
+    }
+
+    $selected = $candidates |
+    Select-Object @{Name = "Draft File"; Expression = { $_.Name } },
+    @{Name = "Last Modified"; Expression = { $_.LastWriteTime.ToString("yyyy-MM-dd HH:mm") } },
+    FullName |
+    Out-GridView -Title "Select a Draft HTML File to Build for Blogger" -OutputMode Single
+
+    if (-not $selected) {
+        Write-Host "`nBuild cancelled.`n" -ForegroundColor Yellow
+        exit 0
+    }
+
+    $HtmlFilePath = $selected.FullName
+}
+elseif ([string]::IsNullOrWhiteSpace($HtmlFilePath)) {
+    $postsDir = Join-Path $PSScriptRoot "posts"
+    $searchRoot = if (Test-Path -LiteralPath $postsDir) { $postsDir } else { $PSScriptRoot }
+
+    $latestDraft = Get-ChildItem -Path $searchRoot -Recurse -Filter "*.html" -ErrorAction SilentlyContinue |
+    Where-Object { $_.Name -notmatch 'preview|template|index|glossary-data|-compiled|-blogger' } |
+    Sort-Object LastWriteTime -Descending |
+    Select-Object -First 1
+
+    if (-not $latestDraft) {
+        Write-Host "`nERROR: No .html draft files found in $searchRoot`n" -ForegroundColor Red
+        exit 1
+    }
+
+    $HtmlFilePath = $latestDraft.FullName
+}
+elseif (-not (Test-Path -LiteralPath $HtmlFilePath)) {
+    $candidatePath = Join-Path $PSScriptRoot $HtmlFilePath
+    if (Test-Path -LiteralPath $candidatePath) {
+        $HtmlFilePath = $candidatePath
+    }
+}
+
+# ==============================================================================
+# PRE-FLIGHT FILE, EXTENSION & SLUG GUARDS
+# ==============================================================================
+if ([string]::IsNullOrWhiteSpace($HtmlFilePath) -or -not (Test-Path -LiteralPath $HtmlFilePath -PathType Leaf)) {
     Write-Host "`nError: File not found at '$HtmlFilePath'`n" -ForegroundColor Red
     exit 1
 }
 
-$fileExt = [System.IO.Path]::GetExtension($HtmlFilePath)
+$fileExt = [System.IO.Path]::GetExtension($HtmlFilePath).ToLowerInvariant()
+$fileName = [System.IO.Path]::GetFileName($HtmlFilePath).ToLowerInvariant()
+
 if ($fileExt -notin @('.html', '.htm')) {
-    Write-Host "`nABORTED: Expected an .html or .htm file, got '$fileExt' ($(Split-Path -Leaf $HtmlFilePath)). Focus a post HTML file and re-run.`n" -ForegroundColor Red
+    Write-Host "`nABORTED: Expected an .html or .htm file, got '$fileExt' ($fileName).`n" -ForegroundColor Red
     exit 1
 }
 
+if ($fileName -like "*ah-preview*" -or $fileName -like "*-blogger-ready.html") {
+    Write-Host "`nSkipped: '$fileName' is a generated preview or output file, not a source draft.`n" -ForegroundColor Yellow
+    exit 0
+}
+
+if ([string]::IsNullOrWhiteSpace($PostSlug)) {
+    $PostSlug = [System.IO.Path]::GetFileNameWithoutExtension($HtmlFilePath)
+}
+
+Write-Host "`nTarget Draft: $HtmlFilePath" -ForegroundColor DarkGray
 $html = Get-Content -LiteralPath $HtmlFilePath -Raw -Encoding UTF8
 
 # ==============================================================================
@@ -59,26 +127,26 @@ function Convert-JsLiteralToJson {
     # Quote unquoted JS object keys and normalize single-quoted strings without altering double-quoted text
     $keyAndQuotePattern = '"(?:\\.|[^"\\])*"|''(?:\\.|[^''\\])*''|([a-zA-Z_$][\w$]*)\s*:'
     $normalized = [regex]::Replace($JsText, $keyAndQuotePattern, {
-        param($m)
-        if ($m.Groups[1].Success) {
-            return "`"$($m.Groups[1].Value)`":"
-        }
-        if ($m.Value.StartsWith("'")) {
-            $inner = $m.Value.Substring(1, $m.Value.Length - 2)
-            $inner = $inner -replace "\\'", "'"
-            $inner = $inner -replace '(?<!\\)"', '\"'
-            return "`"$inner`""
-        }
-        return $m.Value
-    })
+            param($m)
+            if ($m.Groups[1].Success) {
+                return "`"$($m.Groups[1].Value)`":"
+            }
+            if ($m.Value.StartsWith("'")) {
+                $inner = $m.Value.Substring(1, $m.Value.Length - 2)
+                $inner = $inner -replace "\\'", "'"
+                $inner = $inner -replace '(?<!\\)"', '\"'
+                return "`"$inner`""
+            }
+            return $m.Value
+        })
 
     # Strip trailing commas before } or ] outside of string literals
     $trailingCommaPattern = '"(?:\\.|[^"\\])*"|(,\s*(?=[\]\}]))'
     $normalized = [regex]::Replace($normalized, $trailingCommaPattern, {
-        param($m)
-        if ($m.Groups[1].Success) { return "" }
-        return $m.Value
-    })
+            param($m)
+            if ($m.Groups[1].Success) { return "" }
+            return $m.Value
+        })
 
     return $normalized
 }
@@ -122,13 +190,17 @@ function Get-ScholarlyCitationCalls {
                 $ch = $scriptBody[$i]
                 if ($escaped) {
                     $escaped = $false
-                } elseif ($ch -eq '\') {
+                }
+                elseif ($ch -eq '\') {
                     $escaped = $true
-                } elseif ($inSingle) {
+                }
+                elseif ($inSingle) {
                     if ($ch -eq "'") { $inSingle = $false }
-                } elseif ($inDouble) {
+                }
+                elseif ($inDouble) {
                     if ($ch -eq '"') { $inDouble = $false }
-                } else {
+                }
+                else {
                     if ($ch -eq "'") { $inSingle = $true }
                     elseif ($ch -eq '"') { $inDouble = $true }
                     elseif ($ch -eq '(') { $depth++ }
@@ -145,7 +217,8 @@ function Get-ScholarlyCitationCalls {
                     Unclosed       = $false
                 }
                 $searchPos = $i
-            } else {
+            }
+            else {
                 $results += [PSCustomObject]@{
                     RawArgument    = $null
                     HasTypeofGuard = $hasGuard
@@ -195,7 +268,7 @@ $postContent = [regex]::Replace(
 # ==============================================================================
 # STEP 2: SEO, ACCESSIBILITY (CLS/ALT), HEADING, CITATION & E-E-A-T AUDIT
 # ==============================================================================
-Write-Host "`nRunning AgingHealth Pre-Publish Content & SEO Audit..." -ForegroundColor Cyan
+Write-Host "Running AgingHealth Pre-Publish Content & SEO Audit..." -ForegroundColor Cyan
 Write-Host ("-" * 65) -ForegroundColor DarkGray
 
 $auditErrors = 0
@@ -391,9 +464,9 @@ else {
                 $auditErrors++
             }
 
-            $pmid  = "$($study.pmid)".Trim()
+            $pmid = "$($study.pmid)".Trim()
             $pmcid = "$($study.pmcid)".Trim()
-            $doi   = "$($study.doi)".Trim()
+            $doi = "$($study.doi)".Trim()
 
             if ([string]::IsNullOrWhiteSpace($pmid) -and [string]::IsNullOrWhiteSpace($pmcid) -and [string]::IsNullOrWhiteSpace($doi)) {
                 Write-Host "  [WARN] ${label}: No pmid, pmcid, or doi provided (schema will lack url and sameAs links)." -ForegroundColor Yellow
@@ -617,19 +690,19 @@ $scriptRegex = [regex]::new(
 )
 
 $postContent = $scriptRegex.Replace($postContent, {
-    param($match)
-    $rawJson = $match.Groups[1].Value.Trim()
-    try {
-        $parsed = $rawJson | ConvertFrom-Json -ErrorAction Stop
-        $minified = $parsed | ConvertTo-Json -Depth 10 -Compress
-        return "<script type=`"application/ld+json`">$minified</script>"
-    }
-    catch {
-        $errMsg = $_.Exception.Message
-        Write-Host "  [FAIL] Invalid JSON-LD syntax in manual script block: $errMsg" -ForegroundColor Red
-        exit 1
-    }
-})
+        param($match)
+        $rawJson = $match.Groups[1].Value.Trim()
+        try {
+            $parsed = $rawJson | ConvertFrom-Json -ErrorAction Stop
+            $minified = $parsed | ConvertTo-Json -Depth 10 -Compress
+            return "<script type=`"application/ld+json`">$minified</script>"
+        }
+        catch {
+            $errMsg = $_.Exception.Message
+            Write-Host "  [FAIL] Invalid JSON-LD syntax in manual script block: $errMsg" -ForegroundColor Red
+            exit 1
+        }
+    })
 
 # ==============================================================================
 # STEP 5: ASSEMBLE FINAL BLOGGER PAYLOAD & COPY TO CLIPBOARD
@@ -647,21 +720,3 @@ $finalBloggerHtml | Set-Clipboard
 Write-Host ("-" * 65) -ForegroundColor DarkGray
 Write-Host "READY FOR BLOGGER ($auditWarnings warning(s)): Post HTML + minified JSON-LD copied to clipboard!" -ForegroundColor Green
 Write-Host "Open Blogger -> Post -> HTML View -> Select All (Ctrl+A) -> Paste (Ctrl+V)." -ForegroundColor Cyan
-# --- Guard: Only compile valid post .html files ---
-if ([string]::IsNullOrWhiteSpace($HtmlFilePath) -or -not (Test-Path -LiteralPath $HtmlFilePath)) {
-    Write-Host "Skipped: No valid file path was passed to build-blogger-post.ps1." -ForegroundColor Yellow
-    exit 0
-}
-
-$fileExt = [System.IO.Path]::GetExtension($HtmlFilePath).ToLowerInvariant()
-$fileName = [System.IO.Path]::GetFileName($HtmlFilePath).ToLowerInvariant()
-
-if ($fileExt -ne ".html") {
-    Write-Host "Skipped: '$fileName' is not an .html post file. Switch to a post .html tab before pressing Ctrl+Shift+B." -ForegroundColor Yellow
-    exit 0
-}
-
-if ($fileName -like "*ah-preview*" -or $fileName -like "*-blogger-ready.html") {
-    Write-Host "Skipped: '$fileName' is a generated preview or output file, not a source draft." -ForegroundColor Yellow
-    exit 0
-}

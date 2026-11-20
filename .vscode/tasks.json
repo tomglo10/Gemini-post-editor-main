@@ -11,7 +11,7 @@
         "Bypass",
         "-File",
         "${workspaceFolder}/build-blogger-post.ps1",
-        "${file}"
+        "${input:draftPicker}"
       ],
       "group": {
         "kind": "build",
@@ -98,7 +98,7 @@
     {
       "id": "draftPicker",
       "type": "pickString",
-      "description": "Choose which HTML draft in posts/ to scan for internal links",
+      "description": "Choose which HTML draft in posts/ to process",
       "options": [
         {
           "label": "Newest Draft in posts/ (Auto-Detect)",
