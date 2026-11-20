@@ -2,36 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Aging Health: Build & Audit Blogger Post",
-      "type": "process",
-      "command": "powershell",
-      "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/build-blogger-post.ps1",
-        "-HtmlFilePath",
-        "${file}",
-        "-PostSlug",
-        "${input:postSlug}",
-        "-TopicName",
-        "${input:topicName}"
-      ],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "clear": true,
-        "showReuseMessage": false
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Notify Search & Open GSC",
+      "label": "Build Blogger Post",
       "type": "shell",
       "command": "powershell",
       "args": [
@@ -39,13 +10,43 @@
         "-ExecutionPolicy",
         "Bypass",
         "-File",
-        "${workspaceFolder}/scripts/notify-search.ps1",
-        "-PostUrl",
-        "${input:livePostUrl}"
+        "${workspaceFolder}/build-blogger-post.ps1",
+        "${file}"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Suggest Internal Links for Current Draft",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/scripts/suggest-internal-links.ps1",
+        "-DraftPath",
+        "${file}"
       ],
       "presentation": {
+        "echo": true,
         "reveal": "always",
-        "panel": "shared"
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
       },
       "problemMatcher": []
     },
@@ -62,29 +63,35 @@
         "-PingBing"
       ],
       "presentation": {
+        "echo": true,
         "reveal": "always",
-        "panel": "shared"
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
       },
       "problemMatcher": []
-    }
-  ],
-  "inputs": [
-    {
-      "id": "postSlug",
-      "type": "promptString",
-      "description": "Blogger Post Slug (press Enter to use current filename):",
-      "default": "${fileBasenameNoExtension}"
     },
     {
-      "id": "topicName",
-      "type": "promptString",
-      "description": "Topic Name for DefinedTermSet schema (optional — press Enter to auto-generate from slug):",
-      "default": ""
-    },
-    {
-      "id": "livePostUrl",
-      "type": "promptString",
-      "description": "Paste the live published Blogger post URL (e.g., https://www.aginghealth.website/2026/11/your-slug.html):"
+      "label": "Refresh Local Keyword Map",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/scripts/generate-keyword-map.ps1"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "problemMatcher": []
     }
   ]
 }
