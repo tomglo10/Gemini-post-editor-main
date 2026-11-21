@@ -3,7 +3,7 @@
   "tasks": [
     {
       "label": "Build Blogger Post",
-      "type": "shell",
+      "type": "process",
       "command": "powershell",
       "args": [
         "-NoProfile",
@@ -29,7 +29,7 @@
     },
     {
       "label": "Suggest Internal Links for Current Draft",
-      "type": "shell",
+      "type": "process",
       "command": "powershell",
       "args": [
         "-NoProfile",
@@ -52,7 +52,7 @@
     },
     {
       "label": "Validate Blogger XML Theme",
-      "type": "shell",
+      "type": "process",
       "command": "powershell",
       "args": [
         "-NoProfile",
@@ -75,7 +75,7 @@
     },
     {
       "label": "Audit & Sync Sitemap",
-      "type": "shell",
+      "type": "process",
       "command": "powershell",
       "args": [
         "-NoProfile",
@@ -97,7 +97,7 @@
     },
     {
       "label": "Refresh Local Keyword Map",
-      "type": "shell",
+      "type": "process",
       "command": "powershell",
       "args": [
         "-NoProfile",
@@ -113,6 +113,76 @@
         "panel": "shared",
         "showReuseMessage": false,
         "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Ping IndexNow (Live URL)",
+      "type": "process",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/scripts/ping-indexnow.ps1",
+        "-Url",
+        "${input:livePostUrl}"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Auto-Ping Recent Blogger Posts (Bing)",
+      "type": "process",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/scripts/ping-recent-posts.ps1",
+        "-SiteUrl",
+        "https://www.aginghealth.website",
+        "-Mode",
+        "Bing",
+        "-HoursBack",
+        "24"
+      ],
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared",
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Test Feed Ping (Dry Run)",
+      "type": "process",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/scripts/ping-recent-posts.ps1",
+        "-SiteUrl",
+        "https://www.aginghealth.website",
+        "-Mode",
+        "Bing",
+        "-HoursBack",
+        "72",
+        "-DryRun"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
       },
       "problemMatcher": []
     }
@@ -157,6 +227,11 @@
         }
       ],
       "default": ""
+    },
+    {
+      "id": "livePostUrl",
+      "type": "promptString",
+      "description": "Paste the live published URL to ping IndexNow"
     }
   ]
 }
