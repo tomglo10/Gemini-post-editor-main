@@ -364,7 +364,7 @@ else {
 
 # 2D. Internal Glossary Link & Anchor Parity Check
 if (-not $hasGlossaryHubLink) {
-    Write-Host "  [WARN] No internal link to '/p/glossary.html' or '#term-' anchors found." -ForegroundColor Yellow
+    Write-Host "  [WARN] No internal link to 'glossary_36.html' or '#term-' anchors found." -ForegroundColor Yellow
     $auditWarnings++
 }
 else {
@@ -662,9 +662,9 @@ if ($glossarySectionMatch.Success) {
                 }
                 "isPartOf"         = [ordered]@{
                     "@type" = "DefinedTermSet"
-                    "@id"   = "https://www.aginghealth.website/p/glossary.html#glossary-hub"
+                    "@id"   = "https://www.aginghealth.website/p/glossary_36.html#glossary-hub"
                     "name"  = "Aging Health Medical & Senior Wellness Glossary"
-                    "url"   = "https://www.aginghealth.website/p/glossary.html"
+                    "url"   = "https://www.aginghealth.website/p/glossary_36.html"
                 }
                 "hasDefinedTerm"   = $termsList
             }

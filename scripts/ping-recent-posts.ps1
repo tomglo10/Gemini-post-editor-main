@@ -108,7 +108,6 @@ try {
             urlList = @($urlsToSubmit)
         } | ConvertTo-Json -Depth 3
 
-        $apiResponse = Invoke-RestMethod -Uri $endpoint -Method Post `
             -ContentType "application/json; charset=utf-8" -Body $payload -TimeoutSec 20
 
         Write-Host "Bing URL Submission succeeded (HTTP 200)." -ForegroundColor Green
